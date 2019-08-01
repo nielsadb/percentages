@@ -108,12 +108,13 @@
         [85, 95],
         [1,84],
         [96, Number.MAX_VALUE])
-      document.getElementById("1rm").addEventListener("input", calcAndColorPercentage)
-      document.getElementById("reps").addEventListener("input", calcAndColorPercentage)
+      document.getElementById("1rm").addEventListener("input", calcWeight)
+      document.getElementById("reps").addEventListener("input", calcWeight)
       document.getElementById("weight").addEventListener("input", calcAndColorPercentage)
       document.getElementById("percentage").addEventListener("input", calcWeight)
       document.getElementById("percentage").addEventListener("input", colorPercentage)
-      calcAndColorPercentage()
+      document.getElementById("1rm").focus()
+      calcWeight()
     }
   </script>
 </head>
@@ -129,12 +130,12 @@
         <label for="reps">reps</label>
       </div>
       <div>
-        <input type="number" min="20" step="10" value="130" id="weight" name="weight"/>
-        <label for="weight">weight</label>
+        <input type="number" min="10" max="100" step="1" value="90" id="percentage" name="percentage"/>
+        <label for="percentage">relative %</label>
       </div>
       <div>
-        <input type="number" min="10" max="100" step="1" id="percentage" name="percentage"/>
-        <label for="percentage">relative %</label>
+        <input type="number" min="20" step="10" id="weight" name="weight"/>
+        <label for="weight">weight</label>
       </div>
     </fieldset>
   </form>
