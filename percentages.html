@@ -1,0 +1,142 @@
+<html>
+<head>
+  <style>
+  body, input {
+    font-family: -apple-system, "Helvetica Neue", sans-serif;
+    font-size: 125%;
+  }
+  body {
+    background: #ececec;
+    padding: 3em;
+  }
+  fieldset {
+    width: 10em;
+    margin: 20px;
+    border: 0 none;
+    background: #ffffff;
+  }
+  fieldset div {
+    margin: 4px 0;
+    display: flex;
+    align-items: center;
+  }
+  label {
+    order: 1;
+    width: 10em;
+    text-align: right;
+    padding-right: 0.5em;
+    user-select: none;
+    cursor: pointer;
+  }
+  input {
+    background: #e4f8e9;
+    outline-style: none;
+    width: 5em;
+    order: 2;
+    flex: 1 1 auto;
+    text-align: left;
+    padding: 12px 20px;
+  }
+  input.good {
+    color: rgb(55, 161, 55);
+  }
+  input.meh {
+    color: rgb(209, 167, 51);
+  }
+  input.bad {
+    color: rgb(207, 15, 15);
+  }
+  input.error {
+    background: #ff1008;
+    color: #ffffff;
+  }
+  input:focus ~ label {
+    font-weight: bold;
+  }
+  </style>
+  <script>
+    const percentages = [ 1.00, 0.95, 0.93, 0.90, 0.87, 0.85, 0.83, 0.80, 0.77, 0.75 ]
+
+    const get1RMandReps = function() {
+      const oneRM = parseInt(document.getElementById("1rm").value)
+      const reps = parseInt(document.getElementById("reps").value)
+      if (isNaN(oneRM) || isNaN(reps) || reps < 1 || reps > 10) return
+      return {"oneRM": oneRM, "reps":reps}
+    }
+
+    const calcAndColorPercentage = function() {
+      const m = get1RMandReps()
+      const weight = parseInt(document.getElementById("weight").value)
+      if (isNaN(weight) || !m) return
+      document.getElementById("percentage").value =
+        Math.ceil(100 * weight / m.oneRM / percentages[m.reps-1])
+      colorPercentage()
+    }
+
+    const calcWeight = function() {
+      const m = get1RMandReps()
+      const percentage = parseInt(document.getElementById("percentage").value)
+      if (isNaN(percentage) || !m) return
+      document.getElementById("weight").value =
+        Math.ceil((percentage/100) * percentages[m.reps] * m.oneRM)
+    }
+
+    const makeColorizer = function(e, good, meh, bad) {
+      return function () {
+        const v = parseInt(e.value)
+        var cls
+        if (isNaN(v)) {
+          cls = ""
+        } else if (good && good[0] <= v && v <= good[1]) {
+          cls = "good"
+        } else if (meh && meh[0] <= v && v <= meh[1]) {
+          cls = "meh"
+        } else if (bad && bad[0] <= v && v <= bad[1]) {
+          cls = "bad"
+        } else {
+          cls = ""
+        }
+        e.className = cls
+      }
+    }
+
+    var colorPercentage
+    
+    window.onload = function() {
+      colorPercentage = makeColorizer(
+        document.getElementById("percentage"),
+        [85, 95],
+        [1,84],
+        [96, Number.MAX_VALUE])
+      document.getElementById("1rm").addEventListener("input", calcAndColorPercentage)
+      document.getElementById("reps").addEventListener("input", calcAndColorPercentage)
+      document.getElementById("weight").addEventListener("input", calcAndColorPercentage)
+      document.getElementById("percentage").addEventListener("input", calcWeight)
+      document.getElementById("percentage").addEventListener("input", colorPercentage)
+      calcAndColorPercentage()
+    }
+  </script>
+</head>
+<body>
+  <form>
+    <fieldset>
+      <div>
+        <input required type="number" min="20" step="10" value="150" id="1rm" name="1rm"/>
+        <label for="1rm">1RM</label>
+      </div>
+      <div>
+        <input required type="number" min="1" max="10" value="3" id="reps" name="reps"/>
+        <label for="reps">reps</label>
+      </div>
+      <div>
+        <input type="number" min="20" step="10" value="130" id="weight" name="weight"/>
+        <label for="weight">weight</label>
+      </div>
+      <div>
+        <input type="number" min="10" max="100" step="1" id="percentage" name="percentage"/>
+        <label for="percentage">relative %</label>
+      </div>
+    </fieldset>
+  </form>
+</body>
+</html>
